@@ -27,7 +27,7 @@ export const createProductionStepExecution = () => {
               const newPriorProductionStepExecution = priorProductionStepExecution;
               priorSteps.push(newPriorProductionStepExecution);
               // newPriorProductionStepExecution.priorSteps = priorSteps
-              productionStepExecutions.push(newPriorProductionStepExecution);
+              // productionStepExecutions.push(newPriorProductionStepExecution);
             }
           }
         }
