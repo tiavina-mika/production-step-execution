@@ -23,12 +23,9 @@ const getProductionStepExecutions = (
 
       const productionStepExecution: any = {
         order: parentIndex ? parentIndex + index : index,
-        productionStep
-        // productionItems: productionItems,
-        // recipe,
-        // section
+        productionStep // pointer
       };
-      const priorSteps = [];
+      const priorSteps = []; // pointers
 
       if (productionStep.stepComponents) {
         for (const stepComponent of productionStep.stepComponents) {
@@ -70,8 +67,6 @@ export const createProductionStepExecution2 = () => {
   for (const productionItem of productionItems) {
     for (const section of productionItem.recipe.sections) {
       productionStepExecutions = getProductionStepExecutions(
-        productionItem.recipe,
-        section,
         (section as any).productionSteps
       );
     }
@@ -87,8 +82,6 @@ export const createProductionStepExecution3 = () => {
     const recipeProductionStepExecutions = [];
     for (const section of productionItem.recipe.sections) {
       const productionStepExecutions = getProductionStepExecutions(
-        productionItem.recipe,
-        section,
         (section as any).productionSteps
       );
       recipeProductionStepExecutions.push(productionStepExecutions);
