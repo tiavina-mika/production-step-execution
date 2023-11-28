@@ -1,6 +1,8 @@
 import { productionItems } from "../data/productionItem";
 
 const getProductionStepExecutions = (
+  recipe,
+  section,
   productionSteps = [],
   parentIndex = null
 ): any => {
@@ -16,15 +18,23 @@ const getProductionStepExecutions = (
       // console.log("productionStep", index, ": ", productionStep.name, "-", productionStep);
 
       productionStepExecutions.push(
-        ...getProductionStepExecutions(productionStep.productionSteps, index)
+        ...getProductionStepExecutions(
+          recipe,
+          section,
+          productionStep.productionSteps,
+          index
+        )
       );
     } else {
       // console.log("productionStep 2", index, ": ", productionStep.name, "-", productionStep);
 
-      const productionStepExecution: any = {};
-      productionStepExecution.order = parentIndex ? parentIndex + index : index;
-      productionStepExecution.productionStep = { step: productionStep };
-      productionStepExecution.productionItems = productionItems;
+      const productionStepExecution: any = {
+        order: parentIndex ? parentIndex + index : index,
+        productionStep: { step: productionStep },
+        productionItems: productionItems,
+        recipe,
+        section
+      };
       const priorSteps = [];
 
       if (productionStep.stepComponents) {
@@ -68,6 +78,8 @@ export const createProductionStepExecution = () => {
   for (const productionItem of productionItems) {
     for (const section of productionItem.recipe.sections) {
       productionStepExecutions = getProductionStepExecutions(
+        productionItem.recipe,
+        section,
         (section as any).productionSteps
       );
     }
