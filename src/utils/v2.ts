@@ -57,11 +57,11 @@ const getProductionStepExecutions = (
 
       productionStepExecution.priorSteps = priorSteps;
 
-      if (priorSteps.length > 0) {
-        productionStepExecution.status = "LOCKED";
-      } else {
-        productionStepExecution.status = "TODO";
-      }
+      // if (priorSteps.length > 0) {
+      //   productionStepExecution.status = "LOCKED";
+      // } else {
+      //   productionStepExecution.status = "TODO";
+      // }
       // .save()
       // await productionStepExecution.save()
       productionStepExecutions.push(productionStepExecution);
