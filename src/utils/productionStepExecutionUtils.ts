@@ -1,8 +1,6 @@
 import { productionItems } from "../data/productionItem";
 
 const getProductionStepExecutions = (
-  recipe,
-  section,
   productionSteps = [],
   parentIndex = null
 ): any => {
@@ -18,22 +16,17 @@ const getProductionStepExecutions = (
       // console.log("productionStep", index, ": ", productionStep.name, "-", productionStep);
 
       productionStepExecutions.push(
-        ...getProductionStepExecutions(
-          recipe,
-          section,
-          productionStep.productionSteps,
-          index
-        )
+        ...getProductionStepExecutions(productionStep.productionSteps, index)
       );
     } else {
       // console.log("productionStep 2", index, ": ", productionStep.name, "-", productionStep);
 
       const productionStepExecution: any = {
         order: parentIndex ? parentIndex + index : index,
-        productionStep,
-        productionItems: productionItems,
-        recipe,
-        section
+        productionStep
+        // productionItems: productionItems,
+        // recipe,
+        // section
       };
       const priorSteps = [];
 
@@ -87,7 +80,7 @@ export const createProductionStepExecution2 = () => {
   return productionStepExecutions;
 };
 
-export const createProductionStepExecution = () => {
+export const createProductionStepExecution3 = () => {
   let productionStepExecutions = [];
 
   for (const productionItem of productionItems) {
@@ -101,6 +94,54 @@ export const createProductionStepExecution = () => {
       recipeProductionStepExecutions.push(productionStepExecutions);
     }
     productionStepExecutions.push(recipeProductionStepExecutions);
+  }
+
+  return productionStepExecutions;
+};
+
+const getRecipeProductionStepExecutions = (
+  productionItems,
+  productionItem,
+  section,
+  productionStepExecutions
+) => {
+  const newProductionStepExecutions = productionStepExecutions.map(
+    (productionStepExecution, index) => {
+      const newProductionStepExecution = {
+        ...productionStepExecution,
+        productionItem,
+        productionItems,
+        section
+      };
+
+      const ulteriorStep = productionStepExecutions[index + 1];
+      if (ulteriorStep) {
+        // pointer
+        newProductionStepExecution.ulteriorStep = ulteriorStep.productionStep;
+      }
+
+      return newProductionStepExecution;
+    }
+  );
+
+  return newProductionStepExecutions;
+};
+export const createProductionStepExecution = () => {
+  let productionStepExecutions = [];
+
+  for (const productionItem of productionItems) {
+    for (const section of productionItem.recipe.sections) {
+      const recipeProductionStepExecutions = getProductionStepExecutions(
+        (section as any).productionSteps
+      );
+
+      productionStepExecutions = getRecipeProductionStepExecutions(
+        productionItems,
+        productionItem,
+        section,
+        recipeProductionStepExecutions
+      );
+    }
   }
 
   return productionStepExecutions;

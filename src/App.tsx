@@ -7,24 +7,24 @@ const productionStepExecution = createProductionStepExecution();
 // console.log("productionStepExecution", productionStepExecution);
 
 // v2
-const formattedItems = productionStepExecution.map((item) => {
-  return item.map((step) => {
-    return step.map((subStep: any) => ({
-      name: subStep.productionStep.name,
-      ...subStep
-    }));
-  });
-});
-console.log("formattedItems", formattedItems);
-
-// v1
 // const formattedItems = productionStepExecution.map((item) => {
-//   return {
-//     name: item.productionStep.name,
-//     ...item
-//   }
+//   return item.map((step) => {
+//     return step.map((subStep: any) => ({
+//       name: subStep.productionStep.name,
+//       ...subStep
+//     }));
+//   });
 // });
 // console.log("formattedItems", formattedItems);
+
+// v1
+const formattedItems = productionStepExecution.map((item) => {
+  return {
+    name: item.productionStep.name,
+    ...item
+  };
+});
+console.log("formattedItems", formattedItems);
 
 const App = () => {
   return (
