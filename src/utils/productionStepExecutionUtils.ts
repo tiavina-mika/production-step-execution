@@ -30,7 +30,7 @@ const getProductionStepExecutions = (
 
       const productionStepExecution: any = {
         order: parentIndex ? parentIndex + index : index,
-        productionStep: { step: productionStep },
+        productionStep,
         productionItems: productionItems,
         recipe,
         section
