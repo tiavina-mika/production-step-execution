@@ -1,24 +1,28 @@
 import { productionItems } from "../data/productionItem";
 
-const getProductionStepExecutions = (productionSteps = []): any => {
+const getProductionStepExecutions = (
+  productionSteps = [],
+  parentIndex = null
+): any => {
   const productionStepExecutions = [];
 
-  for (const productionStepObj of productionSteps) {
+  for (const [index, productionStepObj] of (productionSteps as any).entries()) {
     const productionStep = (productionStepObj as any).step ?? productionStepObj;
     // console.log("productionStep",
     // productionStep.name, "-",
     // productionStep);
 
     if (productionStep.productionSteps) {
-      console.log("productionStep", productionStep.name, "-", productionStep);
+      // console.log("productionStep", index, ": ", productionStep.name, "-", productionStep);
 
       productionStepExecutions.push(
-        ...getProductionStepExecutions(productionStep.productionSteps)
+        ...getProductionStepExecutions(productionStep.productionSteps, index)
       );
     } else {
-      console.log("productionStep 2", productionStep.name, "-", productionStep);
+      // console.log("productionStep 2", index, ": ", productionStep.name, "-", productionStep);
 
       const productionStepExecution: any = {};
+      productionStepExecution.order = parentIndex ? parentIndex + index : index;
       productionStepExecution.productionStep = { step: productionStep };
       productionStepExecution.productionItems = productionItems;
       const priorSteps = [];
