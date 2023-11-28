@@ -5,6 +5,11 @@ import { createProductionStepExecution } from "./utils/productionStepExecutionUt
 
 const productionStepExecution = createProductionStepExecution();
 // console.log("productionStepExecution", productionStepExecution);
+const formattedItems = productionStepExecution.map((item) => ({
+  name: item.productionStep.step.name,
+  ...item
+}));
+console.log("formattedItems", formattedItems);
 
 const App = () => {
   return (
