@@ -12,14 +12,16 @@ export const createProductionStepExecution = () => {
         productionStepExecution.productionItems = productionItems;
         const priorSteps = [];
 
-        for (const stepComponent of productionStep.stepComponents) {
-          const productionStep = stepComponent.priorSteps;
-          const priorProductionStepExecution: any = {};
-          priorProductionStepExecution.productionStep = { productionStep };
-          // .save()
-          const newPriorProductionStepExecution = priorProductionStepExecution;
-          priorSteps.push(newPriorProductionStepExecution);
-          productionStepExecutions.push(newPriorProductionStepExecution);
+        if (productionStep.stepComponents) {
+          for (const stepComponent of productionStep.stepComponents) {
+            const productionStep = stepComponent.priorSteps;
+            const priorProductionStepExecution: any = {};
+            priorProductionStepExecution.productionStep = { productionStep };
+            // .save()
+            const newPriorProductionStepExecution = priorProductionStepExecution;
+            priorSteps.push(newPriorProductionStepExecution);
+            productionStepExecutions.push(newPriorProductionStepExecution);
+          }
         }
 
         productionStepExecution.priorSteps = priorSteps;
@@ -35,4 +37,6 @@ export const createProductionStepExecution = () => {
       }
     }
   }
+
+  return productionStepExecutions;
 };
