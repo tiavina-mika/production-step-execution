@@ -14,10 +14,6 @@ const formattedItems = productionStepExecution.map((item) => {
   });
 });
 console.log("formattedItems", formattedItems);
-// {
-//   name: step.productionStep.name,
-//   ...step
-// }
 
 const App = () => {
   return (
