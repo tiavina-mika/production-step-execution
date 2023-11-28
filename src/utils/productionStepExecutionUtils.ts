@@ -71,7 +71,7 @@ const getProductionStepExecutions = (
   return productionStepExecutions;
 };
 
-export const createProductionStepExecution = () => {
+export const createProductionStepExecution2 = () => {
   let productionStepExecutions = [];
 
   for (const productionItem of productionItems) {
@@ -82,6 +82,25 @@ export const createProductionStepExecution = () => {
         (section as any).productionSteps
       );
     }
+  }
+
+  return productionStepExecutions;
+};
+
+export const createProductionStepExecution = () => {
+  let productionStepExecutions = [];
+
+  for (const productionItem of productionItems) {
+    const recipeProductionStepExecutions = [];
+    for (const section of productionItem.recipe.sections) {
+      const productionStepExecutions = getProductionStepExecutions(
+        productionItem.recipe,
+        section,
+        (section as any).productionSteps
+      );
+      recipeProductionStepExecutions.push(productionStepExecutions);
+    }
+    productionStepExecutions.push(recipeProductionStepExecutions);
   }
 
   return productionStepExecutions;
