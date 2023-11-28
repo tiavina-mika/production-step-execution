@@ -104,7 +104,8 @@ const getRecipeProductionStepExecutions = (
         ...productionStepExecution,
         productionItem,
         productionItems,
-        section
+        section,
+        status: productionStepExecution.order === 0 ? "TODO" : "LOCKED"
       };
 
       const ulteriorStep = productionStepExecutions[index + 1];
