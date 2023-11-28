@@ -102,8 +102,8 @@ const getRecipeProductionStepExecutions = (
     (productionStepExecution, index) => {
       const newProductionStepExecution = {
         ...productionStepExecution,
-        productionItem,
-        productionItems,
+        productionItem, // current productionItem
+        productionItems, // all production items with the same production date and recipe
         section,
         status: productionStepExecution.order === 0 ? "TODO" : "LOCKED"
       };
