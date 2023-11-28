@@ -1,6 +1,10 @@
-import * as React from 'react';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
+import * as React from "react";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import { createProductionStepExecution } from "./utils/productionStepExecutionUtils";
+
+const productionStepExecution = createProductionStepExecution();
+console.log("productionStepExecution", productionStepExecution);
 
 const App = () => {
   return (
@@ -10,6 +14,6 @@ const App = () => {
       <Button variant="outlined">Outlined</Button>
     </Stack>
   );
-}
+};
 
 export default App;
