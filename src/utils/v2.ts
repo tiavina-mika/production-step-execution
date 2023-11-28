@@ -44,10 +44,8 @@ const getProductionStepExecutions = (
             const productionStep = stepComponent.priorSteps;
             // console.log("productionStep priors", productionStep.name);
 
-            const priorProductionStepExecution: any = {};
-            priorProductionStepExecution.productionStep = {
-              step: productionStep
-            };
+            const priorProductionStepExecution: any = productionStep;
+
             // .save()
             const newPriorProductionStepExecution = priorProductionStepExecution;
             priorSteps.push(newPriorProductionStepExecution);
