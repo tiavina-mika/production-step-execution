@@ -7,6 +7,7 @@ export const createProductionStepExecution = () => {
     for (const section of productionItem.recipe.sections) {
       for (const productionStepObj of section.productionSteps) {
         const productionStep = productionStepObj.step;
+        console.log("productionStep", productionStep.name);
         const productionStepExecution: any = {};
         productionStepExecution.productionStep = { productionStep };
         productionStepExecution.productionItems = productionItems;
@@ -14,13 +15,18 @@ export const createProductionStepExecution = () => {
 
         if (productionStep.stepComponents) {
           for (const stepComponent of productionStep.stepComponents) {
-            const productionStep = stepComponent.priorSteps;
-            const priorProductionStepExecution: any = {};
-            priorProductionStepExecution.productionStep = { productionStep };
-            // .save()
-            const newPriorProductionStepExecution = priorProductionStepExecution;
-            priorSteps.push(newPriorProductionStepExecution);
-            productionStepExecutions.push(newPriorProductionStepExecution);
+            if (stepComponent.priorSteps) {
+              const productionStep = stepComponent.priorSteps;
+              console.log("productionStep priors", productionStep.name);
+
+              const priorProductionStepExecution: any = {};
+              priorProductionStepExecution.productionStep = { productionStep };
+              // .save()
+              const newPriorProductionStepExecution = priorProductionStepExecution;
+              priorSteps.push(newPriorProductionStepExecution);
+              // newPriorProductionStepExecution.priorSteps = priorSteps
+              productionStepExecutions.push(newPriorProductionStepExecution);
+            }
           }
         }
 
