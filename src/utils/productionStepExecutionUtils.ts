@@ -2,7 +2,7 @@ import { productionItems } from "../data/productionItem";
 
 const getProductionStepExecutionsToSave = (productionSteps = []): any => {
   const productionStepExecutions = [];
-  const priorStepMap = new Map();
+  const priorStepsMap = new Map();
 
   for (const productionStepObj of productionSteps) {
     const productionStep = (productionStepObj as any).step ?? productionStepObj;
@@ -46,7 +46,7 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
         productionStepExecution.status = "LOCKED";
         productionStepExecution.priorSteps = priorSteps;
         for (const priorStep of priorSteps) {
-          priorStepMap.set(priorStep.index, productionStep);
+          priorStepsMap.set(priorStep.index, productionStep);
         }
       } else {
         productionStepExecution.status = "TODO";
@@ -61,7 +61,7 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
   // return productionStepExecutions;
   return {
     productionStepExecutions,
-    priorStepMap
+    priorStepsMap
   };
 };
 
@@ -87,7 +87,7 @@ const getSectionProductionStepExecutions = (
   productionItem,
   section,
   productionStepExecutions,
-  priorStepMap
+  priorStepsMap
 ) => {
   const newProductionStepExecutions = productionStepExecutions.map(
     (productionStepExecution) => {
@@ -98,7 +98,7 @@ const getSectionProductionStepExecutions = (
         // section,
       };
 
-      const ulteriorStep = priorStepMap.get(
+      const ulteriorStep = priorStepsMap.get(
         productionStepExecution.productionStep.index
       );
       if (ulteriorStep) {
@@ -120,14 +120,14 @@ export const createProductionStepExecution = () => {
       const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
         (section as any).productionSteps
       );
-      // priorStepMap
+      // priorStepsMap
       productionStepExecutions = getSectionProductionStepExecutions(
         productionItems,
         productionItem,
         section,
         productionStepExecutionsToSave.productionStepExecutions,
-        productionStepExecutionsToSave.priorStepMap
-        // priorStepMap
+        productionStepExecutionsToSave.priorStepsMap
+        // priorStepsMap
       );
     }
   }
