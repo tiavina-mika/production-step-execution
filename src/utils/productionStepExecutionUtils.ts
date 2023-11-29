@@ -47,11 +47,11 @@ const getProductionStepExecutions = (
 
       productionStepExecution.priorSteps = priorSteps;
 
-      // if (priorSteps.length > 0) {
-      //   productionStepExecution.status = "LOCKED";
-      // } else {
-      //   productionStepExecution.status = "TODO";
-      // }
+      if (priorSteps.length > 0) {
+        productionStepExecution.status = "LOCKED";
+      } else {
+        productionStepExecution.status = "TODO";
+      }
       // .save()
       // await productionStepExecution.save()
       productionStepExecutions.push(productionStepExecution);
@@ -101,18 +101,34 @@ const getRecipeProductionStepExecutions = (
   const newProductionStepExecutions = productionStepExecutions.map(
     (productionStepExecution, index) => {
       const newProductionStepExecution = {
-        ...productionStepExecution,
-        productionItem, // current productionItem
-        productionItems, // all production items with the same production date and recipe
-        section,
-        status: productionStepExecution.order === 0 ? "TODO" : "LOCKED"
+        ...productionStepExecution
+        // productionItem, // current productionItem
+        // productionItems, // all production items with the same production date and recipe
+        // section,
+        // status: productionStepExecution.order === 0 ? "TODO" : "LOCKED"
       };
 
-      const ulteriorStep = productionStepExecutions[index + 1];
-      if (ulteriorStep) {
-        // pointer
-        newProductionStepExecution.ulteriorStep = ulteriorStep.productionStep;
+      const nexstep = productionStepExecutions[index + 1];
+
+      if (nexstep) {
+        const nextStepPriorStep = nexstep.priorSteps.find((step) => {
+          if (step.objectId) {
+            return (
+              step.objectId === productionStepExecution.productionStep.objectId
+            );
+          }
+
+          return step.index === productionStepExecution.productionStep.index;
+        });
+        if (nextStepPriorStep) {
+          newProductionStepExecution.ulteriorStep = nexstep;
+        }
       }
+
+      // if (ulteriorStep) {
+      //   // pointer
+      //   newProductionStepExecution.ulteriorStep = ulteriorStep.productionStep;
+      // }
 
       return newProductionStepExecution;
     }
