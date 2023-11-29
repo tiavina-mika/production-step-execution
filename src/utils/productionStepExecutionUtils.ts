@@ -106,11 +106,11 @@ const getRecipeProductionStepExecutions = (
         // status: productionStepExecution.order === 0 ? "TODO" : "LOCKED"
       };
 
-      const current = priorStepMap.get(
+      const ulteriorStep = priorStepMap.get(
         productionStepExecution.productionStep.index
       );
-      if (current) {
-        newProductionStepExecution.ulteriorStep = current;
+      if (ulteriorStep) {
+        newProductionStepExecution.ulteriorStep = ulteriorStep;
       }
 
       return newProductionStepExecution;
