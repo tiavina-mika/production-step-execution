@@ -41,14 +41,13 @@ const getProductionStepExecutions = (
             // .save()
             const newPriorProductionStepExecution = priorProductionStepExecution;
             priorSteps.push(newPriorProductionStepExecution);
-            // newPriorProductionStepExecution.priorSteps = priorSteps
-            // productionStepExecutions.push(newPriorProductionStepExecution);
           }
         }
       }
 
       productionStepExecution.priorSteps = priorSteps;
 
+      // the prior steps should be the ulterior step of the current step
       if (priorSteps) {
         for (const priorStep of priorSteps) {
           priorStepMap.set(priorStep.index, productionStep);
@@ -72,20 +71,6 @@ const getProductionStepExecutions = (
     priorStepMap
   };
 };
-
-// export const createProductionStepExecution2 = () => {
-//   let productionStepExecutions = [];
-
-//   for (const productionItem of productionItems) {
-//     for (const section of productionItem.recipe.sections) {
-//       productionStepExecutions = getProductionStepExecutions(
-//         (section as any).productionSteps
-//       );
-//     }
-//   }
-
-//   return productionStepExecutions;
-// };
 
 export const createProductionStepExecution3 = () => {
   let productionStepExecutions = [];
