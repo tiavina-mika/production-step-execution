@@ -5,6 +5,7 @@ const getProductionStepExecutions = (
   parentIndex = null
 ): any => {
   const productionStepExecutions = [];
+  const priorStepMap = new Map();
 
   for (const [index, productionStepObj] of (productionSteps as any).entries()) {
     const productionStep = (productionStepObj as any).step ?? productionStepObj;
@@ -15,9 +16,10 @@ const getProductionStepExecutions = (
     if (productionStep.productionSteps) {
       // console.log("productionStep", index, ": ", productionStep.name, "-", productionStep);
 
-      productionStepExecutions.push(
-        ...getProductionStepExecutions(productionStep.productionSteps, index)
-      );
+      const {
+        productionStepExecutions: subProductionStepExecutions
+      } = getProductionStepExecutions(productionStep.productionSteps, index);
+      productionStepExecutions.push(...subProductionStepExecutions);
     } else {
       // console.log("productionStep 2", index, ": ", productionStep.name, "-", productionStep);
 
@@ -47,6 +49,12 @@ const getProductionStepExecutions = (
 
       productionStepExecution.priorSteps = priorSteps;
 
+      if (priorSteps) {
+        for (const priorStep of priorSteps) {
+          priorStepMap.set(priorStep.index, productionStep);
+        }
+      }
+
       if (priorSteps.length > 0) {
         productionStepExecution.status = "LOCKED";
       } else {
@@ -58,22 +66,26 @@ const getProductionStepExecutions = (
     }
   }
 
-  return productionStepExecutions;
+  // return productionStepExecutions;
+  return {
+    productionStepExecutions,
+    priorStepMap
+  };
 };
 
-export const createProductionStepExecution2 = () => {
-  let productionStepExecutions = [];
+// export const createProductionStepExecution2 = () => {
+//   let productionStepExecutions = [];
 
-  for (const productionItem of productionItems) {
-    for (const section of productionItem.recipe.sections) {
-      productionStepExecutions = getProductionStepExecutions(
-        (section as any).productionSteps
-      );
-    }
-  }
+//   for (const productionItem of productionItems) {
+//     for (const section of productionItem.recipe.sections) {
+//       productionStepExecutions = getProductionStepExecutions(
+//         (section as any).productionSteps
+//       );
+//     }
+//   }
 
-  return productionStepExecutions;
-};
+//   return productionStepExecutions;
+// };
 
 export const createProductionStepExecution3 = () => {
   let productionStepExecutions = [];
@@ -96,8 +108,10 @@ const getRecipeProductionStepExecutions = (
   productionItems,
   productionItem,
   section,
-  productionStepExecutions
+  productionStepExecutions,
+  priorStepMap
 ) => {
+  const priorMap = new Map();
   const newProductionStepExecutions = productionStepExecutions.map(
     (productionStepExecution, index) => {
       const newProductionStepExecution = {
@@ -108,22 +122,38 @@ const getRecipeProductionStepExecutions = (
         // status: productionStepExecution.order === 0 ? "TODO" : "LOCKED"
       };
 
-      const nexstep = productionStepExecutions[index + 1];
-
-      if (nexstep) {
-        const nextStepPriorStep = nexstep.priorSteps.find((step) => {
-          if (step.objectId) {
-            return (
-              step.objectId === productionStepExecution.productionStep.objectId
-            );
-          }
-
-          return step.index === productionStepExecution.productionStep.index;
-        });
-        if (nextStepPriorStep) {
-          newProductionStepExecution.ulteriorStep = nexstep;
+      if (productionStepExecution.priorSteps) {
+        for (const priorStep of productionStepExecution.priorSteps) {
+          // console.log('priorStep', priorStep)
+          priorMap.set(priorStep.index, productionStepExecution);
         }
       }
+      // console.log('priorStepMap', priorStepMap)
+
+      // console.log('priorMap', priorMap, "-", productionStepExecution.productionStep.index)
+      const current = priorStepMap.get(
+        productionStepExecution.productionStep.index
+      );
+      // console.log('current', current)
+      if (current) {
+        newProductionStepExecution.ulteriorStep = current;
+      }
+      // const nexstep = productionStepExecutions[index + 1];
+
+      // if (nexstep) {
+      //   const nextStepPriorStep = nexstep.priorSteps.find((step) => {
+      //     if (step.objectId) {
+      //       return (
+      //         step.objectId === productionStepExecution.productionStep.objectId
+      //       );
+      //     }
+
+      //     return step.index === productionStepExecution.productionStep.index;
+      //   });
+      //   if (nextStepPriorStep) {
+      //     newProductionStepExecution.ulteriorStep = nexstep;
+      //   }
+      // }
 
       // if (ulteriorStep) {
       //   // pointer
@@ -145,12 +175,14 @@ export const createProductionStepExecution = () => {
       const recipeProductionStepExecutions = getProductionStepExecutions(
         (section as any).productionSteps
       );
-
+      // priorStepMap
       productionStepExecutions = getRecipeProductionStepExecutions(
         productionItems,
         productionItem,
         section,
-        recipeProductionStepExecutions
+        recipeProductionStepExecutions.productionStepExecutions,
+        recipeProductionStepExecutions.priorStepMap
+        // priorStepMap
       );
     }
   }
