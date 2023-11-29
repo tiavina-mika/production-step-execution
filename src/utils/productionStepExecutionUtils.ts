@@ -1,6 +1,6 @@
 import { productionItems } from "../data/productionItem";
 
-const getProductionStepExecutions = (
+const getProductionStepExecutionsToSave = (
   productionSteps = [],
   parentIndex = null
 ): any => {
@@ -18,7 +18,10 @@ const getProductionStepExecutions = (
 
       const {
         productionStepExecutions: subProductionStepExecutions
-      } = getProductionStepExecutions(productionStep.productionSteps, index);
+      } = getProductionStepExecutionsToSave(
+        productionStep.productionSteps,
+        index
+      );
       productionStepExecutions.push(...subProductionStepExecutions);
     } else {
       // console.log("productionStep 2", index, ": ", productionStep.name, "-", productionStep);
@@ -45,20 +48,17 @@ const getProductionStepExecutions = (
         }
       }
 
-      productionStepExecution.priorSteps = priorSteps;
-
       // the prior steps should be the ulterior step of the current step
-      if (priorSteps) {
+      if (priorSteps?.length > 0) {
+        productionStepExecution.status = "LOCKED";
+        productionStepExecution.priorSteps = priorSteps;
         for (const priorStep of priorSteps) {
           priorStepMap.set(priorStep.index, productionStep);
         }
-      }
-
-      if (priorSteps.length > 0) {
-        productionStepExecution.status = "LOCKED";
       } else {
         productionStepExecution.status = "TODO";
       }
+
       // .save()
       // await productionStepExecution.save()
       productionStepExecutions.push(productionStepExecution);
@@ -78,7 +78,7 @@ export const createProductionStepExecution3 = () => {
   for (const productionItem of productionItems) {
     const recipeProductionStepExecutions = [];
     for (const section of productionItem.recipe.sections) {
-      const productionStepExecutions = getProductionStepExecutions(
+      const productionStepExecutions = getProductionStepExecutionsToSave(
         (section as any).productionSteps
       );
       recipeProductionStepExecutions.push(productionStepExecutions);
@@ -89,7 +89,7 @@ export const createProductionStepExecution3 = () => {
   return productionStepExecutions;
 };
 
-const getRecipeProductionStepExecutions = (
+const getSectionProductionStepExecutions = (
   productionItems,
   productionItem,
   section,
@@ -103,7 +103,6 @@ const getRecipeProductionStepExecutions = (
         // productionItem, // current productionItem
         // productionItems, // all production items with the same production date and recipe
         // section,
-        // status: productionStepExecution.order === 0 ? "TODO" : "LOCKED"
       };
 
       const ulteriorStep = priorStepMap.get(
@@ -125,16 +124,16 @@ export const createProductionStepExecution = () => {
 
   for (const productionItem of productionItems) {
     for (const section of productionItem.recipe.sections) {
-      const recipeProductionStepExecutions = getProductionStepExecutions(
+      const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
         (section as any).productionSteps
       );
       // priorStepMap
-      productionStepExecutions = getRecipeProductionStepExecutions(
+      productionStepExecutions = getSectionProductionStepExecutions(
         productionItems,
         productionItem,
         section,
-        recipeProductionStepExecutions.productionStepExecutions,
-        recipeProductionStepExecutions.priorStepMap
+        productionStepExecutionsToSave.productionStepExecutions,
+        productionStepExecutionsToSave.priorStepMap
         // priorStepMap
       );
     }
