@@ -112,7 +112,7 @@ const getRecipeProductionStepExecutions = (
   priorStepMap
 ) => {
   const newProductionStepExecutions = productionStepExecutions.map(
-    (productionStepExecution, index) => {
+    (productionStepExecution) => {
       const newProductionStepExecution = {
         ...productionStepExecution
         // productionItem, // current productionItem
@@ -121,35 +121,12 @@ const getRecipeProductionStepExecutions = (
         // status: productionStepExecution.order === 0 ? "TODO" : "LOCKED"
       };
 
-      // console.log('priorMap', priorMap, "-", productionStepExecution.productionStep.index)
       const current = priorStepMap.get(
         productionStepExecution.productionStep.index
       );
-      // console.log('current', current)
       if (current) {
         newProductionStepExecution.ulteriorStep = current;
       }
-      // const nexstep = productionStepExecutions[index + 1];
-
-      // if (nexstep) {
-      //   const nextStepPriorStep = nexstep.priorSteps.find((step) => {
-      //     if (step.objectId) {
-      //       return (
-      //         step.objectId === productionStepExecution.productionStep.objectId
-      //       );
-      //     }
-
-      //     return step.index === productionStepExecution.productionStep.index;
-      //   });
-      //   if (nextStepPriorStep) {
-      //     newProductionStepExecution.ulteriorStep = nexstep;
-      //   }
-      // }
-
-      // if (ulteriorStep) {
-      //   // pointer
-      //   newProductionStepExecution.ulteriorStep = ulteriorStep.productionStep;
-      // }
 
       return newProductionStepExecution;
     }
