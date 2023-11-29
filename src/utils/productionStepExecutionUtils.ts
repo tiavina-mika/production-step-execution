@@ -1,13 +1,10 @@
 import { productionItems } from "../data/productionItem";
 
-const getProductionStepExecutionsToSave = (
-  productionSteps = [],
-  parentIndex = null
-): any => {
+const getProductionStepExecutionsToSave = (productionSteps = []): any => {
   const productionStepExecutions = [];
   const priorStepMap = new Map();
 
-  for (const [index, productionStepObj] of (productionSteps as any).entries()) {
+  for (const productionStepObj of productionSteps) {
     const productionStep = (productionStepObj as any).step ?? productionStepObj;
     // console.log("productionStep",
     // productionStep.name, "-",
@@ -18,16 +15,12 @@ const getProductionStepExecutionsToSave = (
 
       const {
         productionStepExecutions: subProductionStepExecutions
-      } = getProductionStepExecutionsToSave(
-        productionStep.productionSteps,
-        index
-      );
+      } = getProductionStepExecutionsToSave(productionStep.productionSteps);
       productionStepExecutions.push(...subProductionStepExecutions);
     } else {
       // console.log("productionStep 2", index, ": ", productionStep.name, "-", productionStep);
 
       const productionStepExecution: any = {
-        order: parentIndex ? parentIndex + index : index,
         productionStep // pointer
       };
       const priorSteps = []; // pointers
