@@ -111,7 +111,6 @@ const getRecipeProductionStepExecutions = (
   productionStepExecutions,
   priorStepMap
 ) => {
-  const priorMap = new Map();
   const newProductionStepExecutions = productionStepExecutions.map(
     (productionStepExecution, index) => {
       const newProductionStepExecution = {
@@ -121,14 +120,6 @@ const getRecipeProductionStepExecutions = (
         // section,
         // status: productionStepExecution.order === 0 ? "TODO" : "LOCKED"
       };
-
-      if (productionStepExecution.priorSteps) {
-        for (const priorStep of productionStepExecution.priorSteps) {
-          // console.log('priorStep', priorStep)
-          priorMap.set(priorStep.index, productionStepExecution);
-        }
-      }
-      // console.log('priorStepMap', priorStepMap)
 
       // console.log('priorMap', priorMap, "-", productionStepExecution.productionStep.index)
       const current = priorStepMap.get(
