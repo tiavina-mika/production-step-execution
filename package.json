@@ -5,6 +5,7 @@
     "@mui/material": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "lodash": "4.17.21",
     "react": "latest",
     "react-dom": "latest",
     "typescript": "latest"
