@@ -97,17 +97,18 @@ const getSectionProductionStepExecutions = (
   const newProductionStepExecutions = productionStepExecutions.map(
     (productionStepExecution) => {
       const newProductionStepExecution = {
-        ...productionStepExecution
-        // recipe, // current recipe
-        // productionItems, // all production items with the same production date and recipe
-        // section,
+        ...productionStepExecution,
+        recipe, // current recipe
+        // all production items with the same production date and recipe
+        productionItems: productionItems.filter(
+          (productionItem) => productionItem.recipe.objectId === recipe.objectId
+        ),
+        section
       };
 
       const ulteriorStep = priorStepsMap.get(
         productionStepExecution.productionStep.index
       );
-
-      // console.log("ulteriorStep 2", ulteriorStep)
 
       if (ulteriorStep) {
         newProductionStepExecution.ulteriorStep = ulteriorStep;
