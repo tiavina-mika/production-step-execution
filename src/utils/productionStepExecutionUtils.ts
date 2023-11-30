@@ -89,7 +89,7 @@ export const createProductionStepExecution3 = () => {
 
 const getSectionProductionStepExecutions = (
   productionItems,
-  productionItem,
+  recipe,
   section,
   productionStepExecutions,
   priorStepsMap
@@ -98,7 +98,7 @@ const getSectionProductionStepExecutions = (
     (productionStepExecution) => {
       const newProductionStepExecution = {
         ...productionStepExecution
-        // productionItem, // current productionItem
+        // recipe, // current recipe
         // productionItems, // all production items with the same production date and recipe
         // section,
       };
@@ -131,12 +131,11 @@ export const createProductionStepExecution = () => {
 
       const sectionProductionStepExecutions = getSectionProductionStepExecutions(
         productionItems,
-        productionItem,
+        productionItem.recipe,
         section,
         productionStepExecutionsToSave.productionStepExecutions,
         productionStepExecutionsToSave.priorStepsMap
       );
-      // console.log("ulteriorStep 2", Object.fromEntries(productionStepExecutionsToSave.priorStepsMap))
 
       productionStepExecutions = [
         ...productionStepExecutions,
