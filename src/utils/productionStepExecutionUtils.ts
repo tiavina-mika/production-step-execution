@@ -70,7 +70,7 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
   };
 };
 
-export const createProductionStepExecution3 = () => {
+export const createProductionStepExecutions3 = () => {
   let productionStepExecutions = [];
 
   for (const productionItem of productionItems) {
@@ -87,7 +87,7 @@ export const createProductionStepExecution3 = () => {
   return productionStepExecutions;
 };
 
-const getSectionProductionStepExecutions = (
+const formatSectionProductionStepExecutions = (
   productionItems,
   recipe,
   section,
@@ -121,7 +121,7 @@ const getSectionProductionStepExecutions = (
   return newProductionStepExecutions;
 };
 
-export const createProductionStepExecution = () => {
+export const createProductionStepExecutions = () => {
   let productionStepExecutions = [];
 
   for (const productionItem of productionItems) {
@@ -130,7 +130,7 @@ export const createProductionStepExecution = () => {
         (section as any).productionSteps
       );
 
-      const sectionProductionStepExecutions = getSectionProductionStepExecutions(
+      const sectionProductionStepExecutions = formatSectionProductionStepExecutions(
         productionItems,
         productionItem.recipe,
         section,
@@ -148,7 +148,7 @@ export const createProductionStepExecution = () => {
   return productionStepExecutions;
 };
 
-// export const createProductionStepExecution = () => {
+// export const createProductionStepExecutions = () => {
 //   let productionStepExecutions = [];
 
 //   for (const productionItem of productionItems) {
@@ -158,7 +158,7 @@ export const createProductionStepExecution = () => {
 //         (section as any).productionSteps
 //       );
 
-//       const sectionProductionStepExecutions = getSectionProductionStepExecutions(
+//       const sectionProductionStepExecutions = formatSectionProductionStepExecutions(
 //         productionItems,
 //         productionItem,
 //         section,
