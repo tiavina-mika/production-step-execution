@@ -17,7 +17,14 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
   let priorStepsMap = new Map();
 
   for (const productionStepObj of productionSteps) {
-    const productionStep = (productionStepObj as any).step ?? productionStepObj;
+    const type = !!(productionStepObj as any).step
+      ? "fromRecipe"
+      : "fromReusableSteps";
+
+    const productionStep =
+      type === "fromRecipe"
+        ? (productionStepObj as any).step
+        : productionStepObj;
 
     if (productionStep.productionSteps) {
       const {
@@ -58,7 +65,7 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
         productionStepExecution.status = "TODO";
       }
 
-      if (productionStepObj.step) {
+      if (type === "fromRecipe") {
         productionStepExecution.netWeight = productionStepObj.reusable
           ? productionStepObj.coeff
           : productionStepObj.netWeight;
