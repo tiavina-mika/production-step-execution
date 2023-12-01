@@ -44,14 +44,14 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
       if (productionStep.stepComponents) {
         for (const stepComponent of productionStep.stepComponents) {
           if (stepComponent.priorSteps) {
-            const productionStep = stepComponent.priorSteps;
+            // const productionStep = stepComponent.priorSteps;
 
-            // const priorProductionStepExecution = new ProductionStepExecution()
-            const priorProductionStepExecution: any = productionStep;
+            // // const priorProductionStepExecution = new ProductionStepExecution()
+            // const priorProductionStepExecution: any = productionStep;
 
             // .save()
-            const newPriorProductionStepExecution = priorProductionStepExecution;
-            priorSteps.push(newPriorProductionStepExecution);
+            // const newPriorProductionStepExecution = priorProductionStepExecution;
+            priorSteps.push(stepComponent.priorSteps);
           }
         }
       }
