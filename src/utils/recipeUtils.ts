@@ -1,17 +1,9 @@
-export const getProductionStepPointerObj = (step, isObject) => {
-  if (isObject) {
-    return step.step;
-  }
-
-  return step;
-};
-
 export function updatePriorStepValuesForEachChild(
   stepComponent,
   sumIngredients
 ) {
   if (stepComponent.priorSteps?.stepComponents) {
-    stepComponent.priorSteps.stepComponents.forEach((priorStepComponent) => {
+    stepComponent.priorSteps.stepComponents?.forEach((priorStepComponent) => {
       if (priorStepComponent.supplierItem) {
         sumIngredients.grossWeight += priorStepComponent.grossWeight;
         sumIngredients.netWeight += priorStepComponent.netWeight;
@@ -37,13 +29,7 @@ const updateStepWeightAndCost = (step, values) => {
   step.totalOutputWeight = values.stepTotalNetWeight;
 };
 
-export const computeStepData = (
-  step,
-  ingredientsField = "stepComponents",
-  fromRecipe = false
-) => {
-  const stepPointerObj = getProductionStepPointerObj(step, fromRecipe);
-
+export const computeProductionStepData = (step) => {
   const {
     stepCost,
     stepRealCost,
@@ -51,7 +37,7 @@ export const computeStepData = (
     stepGrossWeight,
     stepTotalGrossWeight,
     stepTotalNetWeight
-  } = stepPointerObj[ingredientsField].reduce(
+  } = step.stepComponents.reduce(
     (acc, ingredient) => {
       let grossWeight = ingredient.grossWeight || 0;
       let netWeight =
@@ -110,9 +96,4 @@ export const computeStepData = (
   };
 
   updateStepWeightAndCost(step, values);
-
-  // update step.step
-  if (fromRecipe) {
-    updateStepWeightAndCost(stepPointerObj, values);
-  }
 };

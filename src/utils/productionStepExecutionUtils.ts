@@ -1,5 +1,6 @@
 import { productionItems } from "../data/productionItem";
-import { computeStepData } from "./recipeUtils";
+import { computeProductionStepData } from "./recipeUtils";
+import { cloneDeep } from "lodash";
 
 const mergedMaps = (...maps) => {
   const dataMap = new Map();
@@ -67,15 +68,24 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
       }
 
       if (type === "fromRecipe") {
-        productionStepExecution.netWeight = productionStepObj.reusable
-          ? productionStepObj.coeff
-          : productionStepObj.netWeight;
+        if (productionStepObj.reusable) {
+          if (productionStepObj.coeff !== null) {
+            productionStepExecution.netWeight = productionStepObj.coeff;
+          } else {
+            productionStepExecution.netWeight = productionStepObj.netWeight;
+          }
+        } else {
+          const newStep = cloneDeep(productionStep);
+          computeProductionStepData(newStep);
+          productionStepExecution.netWeight = newStep.netWeight;
+          productionStepExecution.grossWeight = newStep.grossWeight;
+        }
       } else {
-        computeStepData(productionStepObj, "stepComponents", false);
-        productionStepExecution.netWeight = productionStepObj.netWeight;
-        productionStepExecution.grossWeight = productionStepObj.grossWeight;
+        const newStep = cloneDeep(productionStepObj);
+        computeProductionStepData(newStep);
+        productionStepExecution.netWeight = newStep.netWeight;
+        productionStepExecution.grossWeight = newStep.grossWeight;
       }
-
       // .save()
       // await productionStepExecution.save()
       productionStepExecutions.push(productionStepExecution);
