@@ -125,7 +125,6 @@ const formatSectionProductionStepExecutions = (
 ) => {
   const newProductionStepExecutions = productionStepExecutions.map(
     (productionStepExecution) => {
-      console.log("productionStepExecution", productionStepExecution);
       const newProductionStepExecution = {
         ...productionStepExecution,
         recipe, // current recipe
