@@ -133,8 +133,11 @@ const formatSectionProductionStepExecutions = (
         //   (productionItem) => productionItem.recipe.objectId === recipe.objectId
         // ),
         productionItems,
-        section
-        // theoreticalNetWeight: expectedProductions *
+        section,
+        theoreticalNetWeight:
+          expectedProductions * productionStepExecution.netWeight,
+        theoreticalGrossWeight:
+          expectedProductions * productionStepExecution.grossWeight
       };
 
       const ulteriorStep = priorStepsMap.get(
