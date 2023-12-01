@@ -1,4 +1,5 @@
 import { productionItems } from "../data/productionItem";
+import { computeStepData } from "./recipeUtils";
 
 const mergedMaps = (...maps) => {
   const dataMap = new Map();
@@ -70,8 +71,9 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
           ? productionStepObj.coeff
           : productionStepObj.netWeight;
       } else {
+        computeStepData(productionStepObj, "stepComponents", false);
         productionStepExecution.netWeight = productionStepObj.netWeight;
-        // productionStepExecution.grossWeight = s.grossWeight;
+        productionStepExecution.grossWeight = productionStepObj.grossWeight;
       }
 
       // .save()
