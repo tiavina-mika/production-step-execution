@@ -58,28 +58,41 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
 
       // the prior steps should be the ulterior step of the current step
       if (priorSteps?.length > 0) {
+        // the step is locked until the prior steps are "DONE"
+        // so it will passes as "TODO"
         productionStepExecution.status = "LOCKED";
         productionStepExecution.priorSteps = priorSteps;
+        // the current step prior steps should have a ulterior step with the current prior steps
         for (const priorStep of priorSteps) {
           priorStepsMap.set(priorStep.index, productionStep);
         }
       } else {
+        // if no steps before it, can "DO" it without waiting any prior steps
         productionStepExecution.status = "TODO";
       }
 
+      /* --------------------------------------- */
+      /* ---- step from section (as parent) ---- */
+      /* --------------------------------------- */
       if (type === "fromRecipe") {
+        // reusable step: the weight is saved
         if (productionStepObj.reusable) {
           if (productionStepObj.coeff !== null) {
             productionStepExecution.netWeight = productionStepObj.coeff;
           } else {
             productionStepExecution.netWeight = productionStepObj.netWeight;
           }
+          productionStepExecution.grossWeight = productionStepObj.grossWeight;
+          // non reusable step: the weight is not saved, so it should be calculated
         } else {
           const newStep = cloneDeep(productionStep);
           computeProductionStepData(newStep);
           productionStepExecution.netWeight = newStep.netWeight;
           productionStepExecution.grossWeight = newStep.grossWeight;
         }
+        /* --------------------------------------- */
+        /* - step from reusable step (as parent) - */
+        /* --------------------------------------- */
       } else {
         const newStep = cloneDeep(productionStepObj);
         computeProductionStepData(newStep);
