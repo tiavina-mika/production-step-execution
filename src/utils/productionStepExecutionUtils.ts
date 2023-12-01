@@ -35,6 +35,8 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
       } = getProductionStepExecutionsToSave(productionStep.productionSteps);
 
       productionStepExecutions.push(...subProductionStepExecutions);
+
+      // add the current map with the previous map
       priorStepsMap = mergedMaps(priorStepsMap, subPriorStepsMap);
     } else {
       const productionStepExecution: any = {
