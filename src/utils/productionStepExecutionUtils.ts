@@ -1,6 +1,4 @@
 import { productionItems } from "../data/productionItem";
-import { computeProductionStepData } from "./recipeUtils";
-import { cloneDeep } from "lodash";
 
 const mergedMaps = (...maps) => {
   const dataMap = new Map();
@@ -78,29 +76,23 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
       /* ---- step from section (as parent) ---- */
       /* --------------------------------------- */
       if (type === "fromRecipe") {
-        // reusable step: the weight is saved
         if (productionStepObj.reusable) {
-          if (productionStepObj.coeff !== null) {
-            productionStepExecution.netWeight = productionStepObj.coeff;
-          } else {
-            productionStepExecution.netWeight = productionStepObj.netWeight;
-          }
-          productionStepExecution.grossWeight = productionStepObj.grossWeight;
-          // non reusable step: the weight is not saved, so it should be calculated
+          productionStepExecution.netWeight =
+            productionStepObj.coeff !== null
+              ? productionStepObj.coeff
+              : productionStepObj.netWeight;
         } else {
-          const newStep = cloneDeep(productionStep);
-          computeProductionStepData(newStep);
-          productionStepExecution.netWeight = newStep.netWeight;
-          productionStepExecution.grossWeight = newStep.grossWeight;
+          productionStepExecution.netWeight = productionStepObj.netWeight;
         }
+
+        productionStepExecution.grossWeight = productionStepObj.grossWeight;
+
         /* --------------------------------------- */
         /* - step from reusable step (as parent) - */
         /* --------------------------------------- */
       } else {
-        const newStep = cloneDeep(productionStepObj);
-        computeProductionStepData(newStep);
-        productionStepExecution.netWeight = newStep.netWeight;
-        productionStepExecution.grossWeight = newStep.grossWeight;
+        productionStepExecution.netWeight = productionStep.netWeight;
+        productionStepExecution.grossWeight = productionStep.grossWeight;
       }
       // .save()
       // await productionStepExecution.save()
@@ -144,17 +136,17 @@ const formatSectionProductionStepExecutions = (
       const newProductionStepExecution = {
         ...productionStepExecution,
         recipe, // current recipe
-        // all production items with the same production date and recipe
-        // productionItems: productionItems.filter(
-        //   (productionItem) => productionItem.recipe.objectId === recipe.objectId
-        // ),
         productionItems,
         section,
         theoreticalNetWeight:
-          expectedProductions * productionStepExecution.netWeight,
+          expectedProductions * (productionStepExecution.netWeight || 0),
         theoreticalGrossWeight:
-          expectedProductions * productionStepExecution.grossWeight
+          expectedProductions * (productionStepExecution.grossWeight || 0)
       };
+
+      // the step netWeight and grossWeight are not saved
+      delete newProductionStepExecution.netWeight;
+      delete newProductionStepExecution.grossWeight;
 
       const ulteriorStep = priorStepsMap.get(
         productionStepExecution.productionStep.index
@@ -186,8 +178,43 @@ const getProductionItemsByRecipe = (productionItemsByDate, productionItem) => {
     expectedProductions
   };
 };
+
 export const createProductionStepExecutions = () => {
   let productionStepExecutions = [];
+
+  for (const productionItem of productionItems) {
+    const {
+      productionItemsByRecipe,
+      expectedProductions
+    } = getProductionItemsByRecipe(productionItems, productionItem);
+
+    for (const section of productionItem.recipe.sections) {
+      const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
+        (section as any).productionSteps
+      );
+
+      const sectionProductionStepExecutions = formatSectionProductionStepExecutions(
+        productionItemsByRecipe,
+        productionItem.recipe,
+        section,
+        productionStepExecutionsToSave.productionStepExecutions,
+        productionStepExecutionsToSave.priorStepsMap,
+        expectedProductions
+      );
+
+      productionStepExecutions = [
+        ...productionStepExecutions,
+        ...sectionProductionStepExecutions
+      ];
+    }
+  }
+
+  return productionStepExecutions;
+};
+
+export const createProductionStepExecutions2 = () => {
+  let productionStepExecutions = [];
+  const productionItemsByRecipeMap = new Map();
 
   for (const productionItem of productionItems) {
     const {
