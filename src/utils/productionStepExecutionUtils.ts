@@ -180,114 +180,115 @@ const getProductionItemsByRecipe = (productionItemsByDate, productionItem) => {
 };
 
 export const formatProductionStepExecutionsByProductionItem = (
-  productionItem,
-  productionItemsByRecipe,
-  expectedProductions
+  productionItems,
 ) => {
   let newSections = [];
+  const expectedProductions = productionItems
+    .reduce((acc, curr) => acc + curr.expectedProduction, 0)
 
-  for (const section of productionItem.recipe.sections) {
-    const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
-      (section as any).productionSteps
-    );
-
-    const sectionProductionStepExecutions = formatSectionProductionStepExecutions(
-      productionItemsByRecipe,
-      productionItem.recipe,
-      section,
-      productionStepExecutionsToSave.productionStepExecutions,
-      productionStepExecutionsToSave.priorStepsMap,
-      expectedProductions
-    );
-
-    newSections.push(...sectionProductionStepExecutions);
+  if (productionItems.length > 0) {
+    // since all productionItems has the same recipe
+    const recipe = productionItems[0].recipe
+    for (const section of recipe.sections) {
+      const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
+        (section as any).productionSteps
+      );
+  
+      const sectionProductionStepExecutions = productionStepExecutionsToSave.productionStepExecutions.map(
+        (productionStepExecution) => {
+          const newProductionStepExecution = {
+            ...productionStepExecution,
+            recipe, // current recipe
+            productionItems,
+            section,
+            theoreticalNetWeight:
+              expectedProductions * (productionStepExecution.netWeight || 0),
+            theoreticalGrossWeight:
+              expectedProductions * (productionStepExecution.grossWeight || 0)
+          };
+    
+          // the step netWeight and grossWeight are not saved
+          delete newProductionStepExecution.netWeight;
+          delete newProductionStepExecution.grossWeight;
+    
+          const ulteriorStep = productionStepExecutionsToSave.priorStepsMap.get(
+            productionStepExecution.productionStep.index
+          );
+    
+          if (ulteriorStep) {
+            newProductionStepExecution.ulteriorStep = ulteriorStep;
+          }
+    
+          return newProductionStepExecution;
+        }
+      );
+  
+      newSections.push(...sectionProductionStepExecutions);
+    }
   }
+
 
   return newSections;
 };
 
+
 export const formatProductionStepExecutionsByProductionItems = () => {
+  const recipeMap = new Map()
   let productionStepExecutions = [];
 
   for (const productionItem of productionItems) {
-    const {
-      productionItemsByRecipe,
-      expectedProductions
-    } = getProductionItemsByRecipe(productionItems, productionItem);
 
-    const sectionProductionStepExecutions = formatProductionStepExecutionsByProductionItem(
-      productionItem,
-      productionItemsByRecipe,
-      expectedProductions
-    );
+    const prevRecipes = recipeMap.get(productionItem.recipe.id) || []
+    recipeMap.set(productionItem.recipe.id, [...prevRecipes, productionItem])
+    // const {
+    //   productionItemsByRecipe,
+    //   expectedProductions
+    // } = getProductionItemsByRecipe(productionItems, productionItem);
 
+    // const sectionProductionStepExecutions = formatProductionStepExecutionsByProductionItem(
+    //   productionItem,
+    //   productionItemsByRecipe,
+    //   expectedProductions
+    // );
+
+    // productionStepExecutions = [
+    //   ...productionStepExecutions,
+    //   ...sectionProductionStepExecutions
+    // ];
+  }
+
+  // console.log(Object.fromEntries(recipeMap))
+  for (const r of Object.values(Object.fromEntries(recipeMap))) {
     productionStepExecutions = [
       ...productionStepExecutions,
-      ...sectionProductionStepExecutions
-    ];
+      ...formatProductionStepExecutionsByProductionItem(r)
+    ]
   }
 
   return productionStepExecutions;
 };
 
-export const formatProductionStepExecutionsByProductionItem2 = () => {
-  let productionStepExecutions = [];
-  const productionItemsByRecipeMap = new Map();
 
-  for (const productionItem of productionItems) {
-    const {
-      productionItemsByRecipe,
-      expectedProductions
-    } = getProductionItemsByRecipe(productionItems, productionItem);
-
-    for (const section of productionItem.recipe.sections) {
-      const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
-        (section as any).productionSteps
-      );
-
-      const sectionProductionStepExecutions = formatSectionProductionStepExecutions(
-        productionItemsByRecipe,
-        productionItem.recipe,
-        section,
-        productionStepExecutionsToSave.productionStepExecutions,
-        productionStepExecutionsToSave.priorStepsMap,
-        expectedProductions
-      );
-
-      productionStepExecutions = [
-        ...productionStepExecutions,
-        ...sectionProductionStepExecutions
-      ];
-    }
-  }
-
-  return productionStepExecutions;
-};
-
-// export const formatProductionStepExecutionsByProductionItem = () => {
+// export const formatProductionStepExecutionsByProductionItems2 = () => {
 //   let productionStepExecutions = [];
 
 //   for (const productionItem of productionItems) {
-//     const newSections =  []
-//     for (const section of productionItem.recipe.sections) {
-//       const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
-//         (section as any).productionSteps
-//       );
+//     const {
+//       productionItemsByRecipe,
+//       expectedProductions
+//     } = getProductionItemsByRecipe(productionItems, productionItem);
 
-//       const sectionProductionStepExecutions = formatSectionProductionStepExecutions(
-//         productionItems,
-//         productionItem,
-//         section,
-//         productionStepExecutionsToSave.productionStepExecutions,
-//         productionStepExecutionsToSave.priorStepsMap
-//       );
-//       console.log("ulteriorStep 2", productionStepExecutionsToSave.priorStepsMap.get(
-//         "df1d234f-ddb9-434a-8be6-834f19786ed6"
-//       ))
+//     const sectionProductionStepExecutions = formatProductionStepExecutionsByProductionItem(
+//       productionItem,
+//       productionItemsByRecipe,
+//       expectedProductions
+//     );
 
-//       // productionStepExecutions = sectionProductionStepExecutions
-//       newSections.push(sectionProductionStepExecutions)
-//     }
-
-//     productionStepExecutions.push(...newSections)
+//     productionStepExecutions = [
+//       ...productionStepExecutions,
+//       ...sectionProductionStepExecutions
+//     ];
 //   }
+
+//   return productionStepExecutions;
+// };
