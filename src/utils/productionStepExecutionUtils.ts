@@ -179,7 +179,35 @@ const getProductionItemsByRecipe = (productionItemsByDate, productionItem) => {
   };
 };
 
-export const createProductionStepExecutions = () => {
+
+export const formatProductionStepExecutionsByProductionItem = (
+  productionItem,
+  productionItemsByRecipe,
+  expectedProductions
+) => {
+  let bySections = [];
+
+  for (const section of productionItem.recipe.sections) {
+    const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
+      (section as any).productionSteps
+    );
+
+    const sectionProductionStepExecutions = formatSectionProductionStepExecutions(
+      productionItemsByRecipe,
+      productionItem.recipe,
+      section,
+      productionStepExecutionsToSave.productionStepExecutions,
+      productionStepExecutionsToSave.priorStepsMap,
+      expectedProductions
+    );
+
+    bySections.push(...sectionProductionStepExecutions);
+  }
+
+  return bySections
+};
+
+export const formatProductionStepExecutionsByProductionItems = () => {
   let productionStepExecutions = [];
 
   for (const productionItem of productionItems) {
@@ -188,31 +216,18 @@ export const createProductionStepExecutions = () => {
       expectedProductions
     } = getProductionItemsByRecipe(productionItems, productionItem);
 
-    for (const section of productionItem.recipe.sections) {
-      const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
-        (section as any).productionSteps
-      );
-
-      const sectionProductionStepExecutions = formatSectionProductionStepExecutions(
-        productionItemsByRecipe,
-        productionItem.recipe,
-        section,
-        productionStepExecutionsToSave.productionStepExecutions,
-        productionStepExecutionsToSave.priorStepsMap,
-        expectedProductions
-      );
-
-      productionStepExecutions = [
-        ...productionStepExecutions,
-        ...sectionProductionStepExecutions
-      ];
-    }
+    const sectionProductionStepExecutions = formatProductionStepExecutionsByProductionItem(productionItem, productionItemsByRecipe, expectedProductions)
+ 
+    productionStepExecutions = [
+      ...productionStepExecutions,
+      ...sectionProductionStepExecutions
+    ];
   }
 
   return productionStepExecutions;
 };
 
-export const createProductionStepExecutions2 = () => {
+export const formatProductionStepExecutionsByProductionItem2 = () => {
   let productionStepExecutions = [];
   const productionItemsByRecipeMap = new Map();
 
@@ -246,7 +261,7 @@ export const createProductionStepExecutions2 = () => {
   return productionStepExecutions;
 };
 
-// export const createProductionStepExecutions = () => {
+// export const formatProductionStepExecutionsByProductionItem = () => {
 //   let productionStepExecutions = [];
 
 //   for (const productionItem of productionItems) {
