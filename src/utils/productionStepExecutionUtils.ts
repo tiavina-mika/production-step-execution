@@ -179,13 +179,12 @@ const getProductionItemsByRecipe = (productionItemsByDate, productionItem) => {
   };
 };
 
-
 export const formatProductionStepExecutionsByProductionItem = (
   productionItem,
   productionItemsByRecipe,
   expectedProductions
 ) => {
-  let bySections = [];
+  let newSections = [];
 
   for (const section of productionItem.recipe.sections) {
     const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
@@ -201,10 +200,10 @@ export const formatProductionStepExecutionsByProductionItem = (
       expectedProductions
     );
 
-    bySections.push(...sectionProductionStepExecutions);
+    newSections.push(...sectionProductionStepExecutions);
   }
 
-  return bySections
+  return newSections;
 };
 
 export const formatProductionStepExecutionsByProductionItems = () => {
@@ -216,8 +215,12 @@ export const formatProductionStepExecutionsByProductionItems = () => {
       expectedProductions
     } = getProductionItemsByRecipe(productionItems, productionItem);
 
-    const sectionProductionStepExecutions = formatProductionStepExecutionsByProductionItem(productionItem, productionItemsByRecipe, expectedProductions)
- 
+    const sectionProductionStepExecutions = formatProductionStepExecutionsByProductionItem(
+      productionItem,
+      productionItemsByRecipe,
+      expectedProductions
+    );
+
     productionStepExecutions = [
       ...productionStepExecutions,
       ...sectionProductionStepExecutions
