@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { productionItems } from "../data/productionItem";
 
 const mergedMaps = (...maps) => {
@@ -12,19 +13,15 @@ const mergedMaps = (...maps) => {
   return dataMap;
 };
 
-const getProductionStepExecutionsToSave = (productionSteps = []): any => {
+const getProductionStepExecutionsToSave = (productionSteps = []) => {
   const productionStepExecutions = [];
   let priorStepsMap = new Map();
 
   for (const productionStepObj of productionSteps) {
-    const type = !!(productionStepObj as any).step
-      ? "fromRecipe"
-      : "fromReusableSteps";
+    const type = !!productionStepObj.step ? "fromRecipe" : "fromReusableSteps";
 
     const productionStep =
-      type === "fromRecipe"
-        ? (productionStepObj as any).step
-        : productionStepObj;
+      type === "fromRecipe" ? productionStepObj.step : productionStepObj;
 
     if (productionStep.productionSteps) {
       const {
@@ -37,7 +34,7 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
       // add the current map with the previous map
       priorStepsMap = mergedMaps(priorStepsMap, subPriorStepsMap);
     } else {
-      const productionStepExecution: any = {
+      const productionStepExecution = {
         productionStep // pointer
       };
       const priorSteps = []; // pointers
@@ -99,7 +96,7 @@ export const createProductionStepExecutions3 = () => {
     const recipeProductionStepExecutions = [];
     for (const section of productionItem.recipe.sections) {
       const productionStepExecutions = getProductionStepExecutionsToSave(
-        (section as any).productionSteps
+        section.productionSteps
       );
       recipeProductionStepExecutions.push(productionStepExecutions);
     }
@@ -179,7 +176,7 @@ export const formatProductionStepExecutionsByProductionItem = (
     const recipe = productionItems[0].recipe;
     for (const section of recipe.sections) {
       const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
-        (section as any).productionSteps
+        section.productionSteps
       );
 
       const sectionProductionStepExecutions = productionStepExecutionsToSave.productionStepExecutions.map(
