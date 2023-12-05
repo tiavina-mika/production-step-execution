@@ -89,80 +89,7 @@ const getProductionStepExecutionsToSave = (productionSteps = []) => {
   };
 };
 
-export const createProductionStepExecutions3 = () => {
-  let productionStepExecutions = [];
-
-  for (const productionItem of productionItems) {
-    const recipeProductionStepExecutions = [];
-    for (const section of productionItem.recipe.sections) {
-      const productionStepExecutions = getProductionStepExecutionsToSave(
-        section.productionSteps
-      );
-      recipeProductionStepExecutions.push(productionStepExecutions);
-    }
-    productionStepExecutions.push(recipeProductionStepExecutions);
-  }
-
-  return productionStepExecutions;
-};
-
-const formatSectionProductionStepExecutions = (
-  productionItems,
-  recipe,
-  section,
-  productionStepExecutions,
-  priorStepsMap,
-  expectedProductions
-) => {
-  const newProductionStepExecutions = productionStepExecutions.map(
-    (productionStepExecution) => {
-      const newProductionStepExecution = {
-        ...productionStepExecution,
-        recipe, // current recipe
-        productionItems,
-        section,
-        theoreticalNetWeight:
-          expectedProductions * productionStepExecution.netWeight,
-        theoreticalGrossWeight:
-          expectedProductions * productionStepExecution.grossWeight
-      };
-
-      // the step netWeight and grossWeight are not saved
-      delete newProductionStepExecution.netWeight;
-      delete newProductionStepExecution.grossWeight;
-
-      const ulteriorStep = priorStepsMap.get(
-        productionStepExecution.productionStep.index
-      );
-
-      if (ulteriorStep) {
-        newProductionStepExecution.ulteriorStep = ulteriorStep;
-      }
-
-      return newProductionStepExecution;
-    }
-  );
-
-  return newProductionStepExecutions;
-};
-
-const getProductionItemsByRecipe = (productionItemsByDate, productionItem) => {
-  const productionItemsByRecipe = [];
-  let expectedProductions = 0;
-  for (const productionItemByDate of productionItemsByDate) {
-    if (productionItemByDate.recipe.id === productionItem.recipe.id) {
-      productionItemsByRecipe.push(productionItemByDate);
-      expectedProductions += productionItemByDate.expectedProduction;
-    }
-  }
-
-  return {
-    productionItemsByRecipe,
-    expectedProductions
-  };
-};
-
-export const formatProductionStepExecutionsByProductionItem = (
+export const setProductionStepExecutions = (
   productionItems
 ) => {
   let newSections = [];
@@ -222,54 +149,14 @@ export const formatProductionStepExecutionsByProductionItems = () => {
   for (const productionItem of productionItems) {
     const prevRecipes = recipeMap.get(productionItem.recipe.id) || [];
     recipeMap.set(productionItem.recipe.id, [...prevRecipes, productionItem]);
-    // const {
-    //   productionItemsByRecipe,
-    //   expectedProductions
-    // } = getProductionItemsByRecipe(productionItems, productionItem);
-
-    // const sectionProductionStepExecutions = formatProductionStepExecutionsByProductionItem(
-    //   productionItem,
-    //   productionItemsByRecipe,
-    //   expectedProductions
-    // );
-
-    // productionStepExecutions = [
-    //   ...productionStepExecutions,
-    //   ...sectionProductionStepExecutions
-    // ];
   }
 
-  // console.log(Object.fromEntries(recipeMap))
-  for (const r of Object.values(Object.fromEntries(recipeMap))) {
+  for (const productionItems of Object.values(Object.fromEntries(recipeMap))) {
     productionStepExecutions = [
       ...productionStepExecutions,
-      ...formatProductionStepExecutionsByProductionItem(r)
+      ...setProductionStepExecutions(productionItems)
     ];
   }
 
   return productionStepExecutions;
 };
-
-// export const formatProductionStepExecutionsByProductionItems2 = () => {
-//   let productionStepExecutions = [];
-
-//   for (const productionItem of productionItems) {
-//     const {
-//       productionItemsByRecipe,
-//       expectedProductions
-//     } = getProductionItemsByRecipe(productionItems, productionItem);
-
-//     const sectionProductionStepExecutions = formatProductionStepExecutionsByProductionItem(
-//       productionItem,
-//       productionItemsByRecipe,
-//       expectedProductions
-//     );
-
-//     productionStepExecutions = [
-//       ...productionStepExecutions,
-//       ...sectionProductionStepExecutions
-//     ];
-//   }
-
-//   return productionStepExecutions;
-// };
