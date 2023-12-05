@@ -65,27 +65,17 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
         productionStepExecution.status = "TODO";
       }
 
-      /* --------------------------------------- */
-      /* ---- step from section (as parent) ---- */
-      /* --------------------------------------- */
-      if (type === "fromRecipe") {
-        if (productionStepObj.reusable) {
-          const netWeight =
-            productionStepObj.coeff !== null
-              ? productionStepObj.coeff
-              : productionStepObj.netWeight;
+      /* ---------------- */
+      /* ---- weight ---- */
+      /* ---------------- */
+      if (type === "fromRecipe" && productionStepObj.reusable) {
+        const netWeight =
+          productionStepObj.coeff !== null
+            ? productionStepObj.coeff
+            : productionStepObj.netWeight;
 
-          productionStepExecution.netWeight = netWeight || 0;
-        } else {
-          productionStepExecution.netWeight = productionStepObj.netWeight || 0;
-        }
-
-        productionStepExecution.grossWeight =
-          productionStepObj.grossWeight || 0;
-
-        /* --------------------------------------- */
-        /* - step from reusable step (as parent) - */
-        /* --------------------------------------- */
+        productionStepExecution.netWeight = netWeight || 0;
+        productionStepExecution.grossWeight = productionStepObj.grossWeight || 0;
       } else {
         productionStepExecution.netWeight = productionStep.netWeight || 0;
         productionStepExecution.grossWeight = productionStep.grossWeight || 0;
