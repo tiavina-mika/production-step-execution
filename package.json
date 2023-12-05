@@ -8,6 +8,7 @@
     "lodash": "4.17.21",
     "react": "latest",
     "react-dom": "latest",
+    "react-json-view-lite": "1.2.1",
     "typescript": "latest"
   },
   "description": "https://github.com/mui/material-ui/blob/v5.14.18/docs/data/material/components/buttons/BasicButtons.tsx",

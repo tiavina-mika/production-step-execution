@@ -1,4 +1,6 @@
 // @ts-nocheck
+import { productionItems } from "../data/productionItem";
+import { groupBy } from "lodash";
 
 const mergedMaps = (...maps) => {
   const dataMap = new Map();
@@ -88,9 +90,24 @@ const getProductionStepExecutionsToSave = (productionSteps = []) => {
   };
 };
 
-export const setProductionStepExecutions = (
-  productionItems
-) => {
+export const createProductionStepExecutions3 = () => {
+  let productionStepExecutions = [];
+
+  for (const productionItem of productionItems) {
+    const recipeProductionStepExecutions = [];
+    for (const section of productionItem.recipe.sections) {
+      const productionStepExecutions = getProductionStepExecutionsToSave(
+        section.productionSteps
+      );
+      recipeProductionStepExecutions.push(productionStepExecutions);
+    }
+    productionStepExecutions.push(recipeProductionStepExecutions);
+  }
+
+  return productionStepExecutions;
+};
+
+export const setProductionStepExecutions = (productionItems) => {
   let newSections = [];
   const expectedProductions = productionItems.reduce(
     (acc, curr) => acc + curr.expectedProduction,
@@ -100,6 +117,7 @@ export const setProductionStepExecutions = (
   if (productionItems.length > 0) {
     // since all productionItems has the same recipe
     const recipe = productionItems[0].recipe;
+    console.log(recipe);
     for (const section of recipe.sections) {
       const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
         section.productionSteps
@@ -109,9 +127,15 @@ export const setProductionStepExecutions = (
         (productionStepExecution) => {
           const newProductionStepExecution = {
             ...productionStepExecution,
-            recipe, // current recipe
-            productionItems,
-            section,
+            productionStep: productionStepExecution.productionStep.name, // current recipe
+            recipe: recipe.id, // current recipe
+            productionItems: productionItems.map(
+              (productionItem) => productionItem.name
+            ),
+            priorSteps: productionStepExecution.priorSteps?.map(
+              (priorStep) => priorStep.name
+            ),
+            section: section.name,
             theoreticalNetWeight:
               expectedProductions * (productionStepExecution.netWeight || 0),
             theoreticalGrossWeight:
@@ -127,7 +151,7 @@ export const setProductionStepExecutions = (
           );
 
           if (ulteriorStep) {
-            newProductionStepExecution.ulteriorStep = ulteriorStep;
+            newProductionStepExecution.ulteriorStep = ulteriorStep.name;
           }
 
           return newProductionStepExecution;
@@ -141,7 +165,60 @@ export const setProductionStepExecutions = (
   return newSections;
 };
 
-export const createProductionStepExecutions = (productionItems = []) => {
+// export const setProductionStepExecutions = (
+//   productionItems
+// ) => {
+//   let newSections = [];
+//   const expectedProductions = productionItems.reduce(
+//     (acc, curr) => acc + curr.expectedProduction,
+//     0
+//   );
+
+//   if (productionItems.length > 0) {
+//     // since all productionItems has the same recipe
+//     const recipe = productionItems[0].recipe;
+//     for (const section of recipe.sections) {
+//       const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
+//         section.productionSteps
+//       );
+
+//       const sectionProductionStepExecutions = productionStepExecutionsToSave.productionStepExecutions.map(
+//         (productionStepExecution) => {
+//           const newProductionStepExecution = {
+//             ...productionStepExecution,
+//             recipe, // current recipe
+//             productionItems,
+//             section,
+//             theoreticalNetWeight:
+//               expectedProductions * (productionStepExecution.netWeight || 0),
+//             theoreticalGrossWeight:
+//               expectedProductions * (productionStepExecution.grossWeight || 0)
+//           };
+
+//           // the step netWeight and grossWeight are not saved
+//           delete newProductionStepExecution.netWeight;
+//           delete newProductionStepExecution.grossWeight;
+
+//           const ulteriorStep = productionStepExecutionsToSave.priorStepsMap.get(
+//             productionStepExecution.productionStep.index
+//           );
+
+//           if (ulteriorStep) {
+//             newProductionStepExecution.ulteriorStep = ulteriorStep;
+//           }
+
+//           return newProductionStepExecution;
+//         }
+//       );
+
+//       newSections.push(...sectionProductionStepExecutions);
+//     }
+//   }
+
+//   return newSections;
+// };
+
+export const createProductionStepExecutions = () => {
   const recipeMap = new Map();
   let productionStepExecutions = [];
 
@@ -150,10 +227,10 @@ export const createProductionStepExecutions = (productionItems = []) => {
     recipeMap.set(productionItem.recipe.id, [...prevRecipes, productionItem]);
   }
 
-  for (const recipeProductionItems of Object.values(Object.fromEntries(recipeMap))) {
+  for (const productionItems of Object.values(Object.fromEntries(recipeMap))) {
     productionStepExecutions = [
       ...productionStepExecutions,
-      ...setProductionStepExecutions(recipeProductionItems)
+      ...setProductionStepExecutions(productionItems)
     ];
   }
 
