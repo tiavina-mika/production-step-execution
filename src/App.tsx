@@ -1,12 +1,6 @@
 import * as React from "react";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import {
-  JsonView,
-  allExpanded,
-  darkStyles,
-  defaultStyles
-} from "react-json-view-lite";
+import { JsonView, allExpanded, darkStyles } from "react-json-view-lite";
 import "react-json-view-lite/dist/index.css";
 
 import { createProductionStepExecutions } from "./utils/productionStepExecutionUtils";
@@ -22,7 +16,9 @@ const formattedItems = productionStepExecution.map((item) => {
   };
 });
 
-console.log("formattedItems", formattedItems);
+console.log("------------------");
+console.log("result", formattedItems);
+console.log("------------------");
 
 const App = () => {
   return (
