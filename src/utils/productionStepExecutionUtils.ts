@@ -75,13 +75,13 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
             : productionStepObj.netWeight;
 
         productionStepExecution.netWeight = netWeight || 0;
-        productionStepExecution.grossWeight = productionStepObj.grossWeight || 0;
+        productionStepExecution.grossWeight =
+          productionStepObj.grossWeight || 0;
       } else {
         productionStepExecution.netWeight = productionStep.netWeight || 0;
         productionStepExecution.grossWeight = productionStep.grossWeight || 0;
       }
-      // .save()
-      // await productionStepExecution.save()
+
       productionStepExecutions.push(productionStepExecution);
     }
   }
