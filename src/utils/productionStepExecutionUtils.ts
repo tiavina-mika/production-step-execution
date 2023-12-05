@@ -45,13 +45,6 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
       if (productionStep.stepComponents) {
         for (const stepComponent of productionStep.stepComponents) {
           if (stepComponent.priorSteps) {
-            // const productionStep = stepComponent.priorSteps;
-
-            // // const priorProductionStepExecution = new ProductionStepExecution()
-            // const priorProductionStepExecution: any = productionStep;
-
-            // .save()
-            // const newPriorProductionStepExecution = priorProductionStepExecution;
             priorSteps.push(stepComponent.priorSteps);
           }
         }
@@ -142,9 +135,9 @@ const formatSectionProductionStepExecutions = (
         productionItems,
         section,
         theoreticalNetWeight:
-          expectedProductions * (productionStepExecution.netWeight),
+          expectedProductions * productionStepExecution.netWeight,
         theoreticalGrossWeight:
-          expectedProductions * (productionStepExecution.grossWeight)
+          expectedProductions * productionStepExecution.grossWeight
       };
 
       // the step netWeight and grossWeight are not saved
