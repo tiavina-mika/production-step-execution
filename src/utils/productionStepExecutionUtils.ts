@@ -77,22 +77,25 @@ const getProductionStepExecutionsToSave = (productionSteps = []): any => {
       /* --------------------------------------- */
       if (type === "fromRecipe") {
         if (productionStepObj.reusable) {
-          productionStepExecution.netWeight =
+          const netWeight =
             productionStepObj.coeff !== null
               ? productionStepObj.coeff
               : productionStepObj.netWeight;
+
+          productionStepExecution.netWeight = netWeight || 0;
         } else {
-          productionStepExecution.netWeight = productionStepObj.netWeight;
+          productionStepExecution.netWeight = productionStepObj.netWeight || 0;
         }
 
-        productionStepExecution.grossWeight = productionStepObj.grossWeight;
+        productionStepExecution.grossWeight =
+          productionStepObj.grossWeight || 0;
 
         /* --------------------------------------- */
         /* - step from reusable step (as parent) - */
         /* --------------------------------------- */
       } else {
-        productionStepExecution.netWeight = productionStep.netWeight;
-        productionStepExecution.grossWeight = productionStep.grossWeight;
+        productionStepExecution.netWeight = productionStep.netWeight || 0;
+        productionStepExecution.grossWeight = productionStep.grossWeight || 0;
       }
       // .save()
       // await productionStepExecution.save()
@@ -139,9 +142,9 @@ const formatSectionProductionStepExecutions = (
         productionItems,
         section,
         theoreticalNetWeight:
-          expectedProductions * (productionStepExecution.netWeight || 0),
+          expectedProductions * (productionStepExecution.netWeight),
         theoreticalGrossWeight:
-          expectedProductions * (productionStepExecution.grossWeight || 0)
+          expectedProductions * (productionStepExecution.grossWeight)
       };
 
       // the step netWeight and grossWeight are not saved
@@ -180,20 +183,22 @@ const getProductionItemsByRecipe = (productionItemsByDate, productionItem) => {
 };
 
 export const formatProductionStepExecutionsByProductionItem = (
-  productionItems,
+  productionItems
 ) => {
   let newSections = [];
-  const expectedProductions = productionItems
-    .reduce((acc, curr) => acc + curr.expectedProduction, 0)
+  const expectedProductions = productionItems.reduce(
+    (acc, curr) => acc + curr.expectedProduction,
+    0
+  );
 
   if (productionItems.length > 0) {
     // since all productionItems has the same recipe
-    const recipe = productionItems[0].recipe
+    const recipe = productionItems[0].recipe;
     for (const section of recipe.sections) {
       const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
         (section as any).productionSteps
       );
-  
+
       const sectionProductionStepExecutions = productionStepExecutionsToSave.productionStepExecutions.map(
         (productionStepExecution) => {
           const newProductionStepExecution = {
@@ -206,40 +211,37 @@ export const formatProductionStepExecutionsByProductionItem = (
             theoreticalGrossWeight:
               expectedProductions * (productionStepExecution.grossWeight || 0)
           };
-    
+
           // the step netWeight and grossWeight are not saved
           delete newProductionStepExecution.netWeight;
           delete newProductionStepExecution.grossWeight;
-    
+
           const ulteriorStep = productionStepExecutionsToSave.priorStepsMap.get(
             productionStepExecution.productionStep.index
           );
-    
+
           if (ulteriorStep) {
             newProductionStepExecution.ulteriorStep = ulteriorStep;
           }
-    
+
           return newProductionStepExecution;
         }
       );
-  
+
       newSections.push(...sectionProductionStepExecutions);
     }
   }
 
-
   return newSections;
 };
 
-
 export const formatProductionStepExecutionsByProductionItems = () => {
-  const recipeMap = new Map()
+  const recipeMap = new Map();
   let productionStepExecutions = [];
 
   for (const productionItem of productionItems) {
-
-    const prevRecipes = recipeMap.get(productionItem.recipe.id) || []
-    recipeMap.set(productionItem.recipe.id, [...prevRecipes, productionItem])
+    const prevRecipes = recipeMap.get(productionItem.recipe.id) || [];
+    recipeMap.set(productionItem.recipe.id, [...prevRecipes, productionItem]);
     // const {
     //   productionItemsByRecipe,
     //   expectedProductions
@@ -262,12 +264,11 @@ export const formatProductionStepExecutionsByProductionItems = () => {
     productionStepExecutions = [
       ...productionStepExecutions,
       ...formatProductionStepExecutionsByProductionItem(r)
-    ]
+    ];
   }
 
   return productionStepExecutions;
 };
-
 
 // export const formatProductionStepExecutionsByProductionItems2 = () => {
 //   let productionStepExecutions = [];
