@@ -1,9 +1,11 @@
 import * as React from "react";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import { formatProductionStepExecutionsByProductionItems } from "./utils/productionStepExecutionUtils";
+import { createProductionStepExecutions } from "./utils/productionStepExecutionUtils";
+import { productionItems } from "./data/productionItem";
 
-const productionStepExecution = formatProductionStepExecutionsByProductionItems();
+// @ts-ignore
+const productionStepExecution = createProductionStepExecutions(productionItems);
 
 const formattedItems = productionStepExecution.map((item) => {
   return {

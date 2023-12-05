@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { productionItems } from "../data/productionItem";
 
 const mergedMaps = (...maps) => {
   const dataMap = new Map();
@@ -142,7 +141,7 @@ export const setProductionStepExecutions = (
   return newSections;
 };
 
-export const formatProductionStepExecutionsByProductionItems = () => {
+export const createProductionStepExecutions = (productionItems = []) => {
   const recipeMap = new Map();
   let productionStepExecutions = [];
 
@@ -151,10 +150,10 @@ export const formatProductionStepExecutionsByProductionItems = () => {
     recipeMap.set(productionItem.recipe.id, [...prevRecipes, productionItem]);
   }
 
-  for (const productionItems of Object.values(Object.fromEntries(recipeMap))) {
+  for (const recipeProductionItems of Object.values(Object.fromEntries(recipeMap))) {
     productionStepExecutions = [
       ...productionStepExecutions,
-      ...setProductionStepExecutions(productionItems)
+      ...setProductionStepExecutions(recipeProductionItems)
     ];
   }
 
