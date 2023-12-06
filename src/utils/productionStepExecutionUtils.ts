@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { productionItems } from "../data/productionItem";
-import { groupBy } from "lodash";
 
 const mergedMaps = (...maps) => {
   const dataMap = new Map();
