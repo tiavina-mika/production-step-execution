@@ -165,59 +165,6 @@ export const setProductionStepExecutions = (productionItems) => {
   return newSections;
 };
 
-// export const setProductionStepExecutions = (
-//   productionItems
-// ) => {
-//   let newSections = [];
-//   const expectedProductions = productionItems.reduce(
-//     (acc, curr) => acc + curr.expectedProduction,
-//     0
-//   );
-
-//   if (productionItems.length > 0) {
-//     // since all productionItems has the same recipe
-//     const recipe = productionItems[0].recipe;
-//     for (const section of recipe.sections) {
-//       const productionStepExecutionsToSave = getProductionStepExecutionsToSave(
-//         section.productionSteps
-//       );
-
-//       const sectionProductionStepExecutions = productionStepExecutionsToSave.productionStepExecutions.map(
-//         (productionStepExecution) => {
-//           const newProductionStepExecution = {
-//             ...productionStepExecution,
-//             recipe, // current recipe
-//             productionItems,
-//             section,
-//             theoreticalNetWeight:
-//               expectedProductions * (productionStepExecution.netWeight || 0),
-//             theoreticalGrossWeight:
-//               expectedProductions * (productionStepExecution.grossWeight || 0)
-//           };
-
-//           // the step netWeight and grossWeight are not saved
-//           delete newProductionStepExecution.netWeight;
-//           delete newProductionStepExecution.grossWeight;
-
-//           const ulteriorStep = productionStepExecutionsToSave.priorStepsMap.get(
-//             productionStepExecution.productionStep.index
-//           );
-
-//           if (ulteriorStep) {
-//             newProductionStepExecution.ulteriorStep = ulteriorStep;
-//           }
-
-//           return newProductionStepExecution;
-//         }
-//       );
-
-//       newSections.push(...sectionProductionStepExecutions);
-//     }
-//   }
-
-//   return newSections;
-// };
-
 export const createProductionStepExecutions = () => {
   const recipeMap = new Map();
   let productionStepExecutions = [];
