@@ -90,23 +90,6 @@ const getProductionStepExecutionsToSave = (productionSteps = []) => {
   };
 };
 
-export const createProductionStepExecutions3 = () => {
-  let productionStepExecutions = [];
-
-  for (const productionItem of productionItems) {
-    const recipeProductionStepExecutions = [];
-    for (const section of productionItem.recipe.sections) {
-      const productionStepExecutions = getProductionStepExecutionsToSave(
-        section.productionSteps
-      );
-      recipeProductionStepExecutions.push(productionStepExecutions);
-    }
-    productionStepExecutions.push(recipeProductionStepExecutions);
-  }
-
-  return productionStepExecutions;
-};
-
 export const setProductionStepExecutions = (productionItems) => {
   let newSections = [];
   const expectedProductions = productionItems.reduce(
